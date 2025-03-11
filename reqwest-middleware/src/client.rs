@@ -168,6 +168,15 @@ impl ClientWithMiddleware {
         self.request(Method::HEAD, url)
     }
 
+    /// Convenience method to make a `CONNECT` request to a URL.
+    ///
+    /// # Errors
+    ///
+    /// This method fails whenever the supplied `Url` cannot be parsed.
+    pub fn connect<U: IntoUrl>(&self, url: U) -> RequestBuilder {
+        self.request(Method::CONNECT, url)
+    }
+
     /// Start building a `Request` with the `Method` and `Url`.
     ///
     /// Returns a `RequestBuilder`, which will allow setting headers and
@@ -514,22 +523,6 @@ impl RequestBuilder {
     pub fn json<T: Serialize + ?Sized>(self, json: &T) -> Self {
         RequestBuilder {
             inner: self.inner.json(json),
-            ..self
-        }
-    }
-
-    /// Disable CORS on fetching the request.
-    ///
-    /// # WASM
-    ///
-    /// This option is only effective with WebAssembly target.
-    ///
-    /// The [request mode][mdn] will be set to 'no-cors'.
-    ///
-    /// [mdn]: https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
-    pub fn fetch_mode_no_cors(self) -> Self {
-        RequestBuilder {
-            inner: self.inner.fetch_mode_no_cors(),
             ..self
         }
     }
